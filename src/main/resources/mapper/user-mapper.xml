@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这个是映射文件 定义sql语句  对应的必须是全限定名  对应的名称空间-->
+<mapper namespace="user">
+   <!-- <insert id="create" parameterType="model.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO db.user VALUES (NULL, #{username},md5(#{password}))
+    </insert>-->
+
+    <insert id="create" parameterType="user" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO db.user(username, password,avatar)
+        VALUE (#{username}, md5(#{password}), #{avatar})
+    </insert>
+
+    <update id="modify" parameterType="model.User">
+        UPDATE db.user SET username = #{username}, password = #{password}  WHERE id = #{id}
+    </update>
+
+    <update id="update" parameterType="user">
+        UPDATE db.user
+        SET
+        username  = #{username},
+        password  = #{password},
+        addressId = #{addressId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="remove" parameterType="model.User">
+       DELETE FROM db.user WHERE id=#{id}
+    </update>
+
+    <select id="queryAll" resultType="model.User" >
+      SELECT * FROM db.user ORDER BY id DESC
+    </select>
+
+    <select id="queryById" resultType="model.User" parameterType="int">
+      SELECT * FROM db.user WHERE id=#{id}
+    </select>
+
+    <select id="queryByUsername" parameterType="user" resultType="user">
+        SELECT *
+        FROM db.user
+        WHERE username = #{username}
+    </select>
+
+    <select id="signIn" resultType="model.User" parameterType="model.User">
+      SELECT * FROM db.user WHERE username=#{username} AND password=#{password}
+    </select>
+
+    <resultMap id="queryAllUsers_map" type="user">
+        <result property="username" column="username"/>
+        <collection property="books" ofType="book">
+            <result property="id" column="id"/>
+            <result property="title" column="title"/>
+            <result property="price" column="price"/>
+            <result property="amount" column="amount"/>
+            <result property="pubTime" column="pubTime"/>
+        </collection>
+    </resultMap>
+    <select id="queryAllUsers" parameterType="int" resultMap="queryAllUsers_map">
+        SELECT
+        u.username,
+        b.id,
+        b.title,
+        b.price,
+        b.amount,
+        b.pubTime
+        FROM db.user AS u LEFT OUTER JOIN db.book b
+        ON u.id = b.userId
+    </select>
+
+    <!--根据用户查询它所读的书-->
+    <resultMap id="queryBooksByUserId_map" type="user">
+        <result property="username" column="username"/>
+        <collection property="books" ofType="book">
+            <result property="id" column="id"/>
+            <result property="title" column="title"/>
+            <result property="price" column="price"/>
+            <result property="amount" column="amount"/>
+            <result property="pubTime" column="pubTime"/>
+        </collection>
+    </resultMap>
+    <select id="userQueryBooksByUserId" parameterType="int" resultMap="queryBooksByUserId_map">
+        SELECT
+        u.username,
+        b.id,
+        b.title,
+        b.price,
+        b.amount,
+        b.pubTime
+        FROM db.user AS u LEFT OUTER JOIN  db.book b
+        ON u.id = b.userId
+        WHERE u.id = #{id}
+    </select>
+
+    <!--根据用户查对应的地址-->
+    <resultMap id="userAddress_map" type="user">
+        <result property="username" column="username"/>
+        <association property="address" javaType="address">
+            <result property="detail" column="detail"/>
+        </association>
+    </resultMap>
+    <select id="userAddress" parameterType="int" resultMap="userAddress_map">
+        SELECT
+        u.username,
+        a.detail
+        FROM db.user AS u LEFT OUTER JOIN db.address AS a
+        ON u.id = a.userId
+        WHERE u.id = #{id}
+    </select>
+
+    <!--property 域的名字  column 数据库字段名-->
+    <!-- <resultMap id="queryBooksByUserId_map" type="user">
+        <result property="username" column="username"/>
+        <collection property="books" ofType="book">
+            <result property="title" column="title"/>
+            <result property="price" column="price"/>
+            <result property="amount" column="amount"/>
+            <result property="pubTime" column="pubTime"/>
+
+        </collection>
+    </resultMap>
+    这个是查询全部的字段
+    <select id="userQueryBooksByUserId" parameterType="int" resultMap="queryBooksByUserId_map">
+        SELECT
+            u.username,
+            b.*
+        FROM db.user AS u INNER JOIN db.book b
+                ON u.id = b.userId
+        WHERE u.id = #{id}
+    </select>-->
+
+    <!-- <update id="remove" parameterType="int">
+       DELETE FROM db.user WHERE id=#{id}
+    </update>-->
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <bean id="subWriter" class="ioc.UsbWriter"/>
+    <bean id="floppyWriter" class="ioc.FloppyWriter"/>
+    <bean id="business" class="ioc.Business">
+        <!--属性配置  声明具有set方法的域 ref是reference -->
+        <!--<property name="deviceWriter" ref="subWriter"/>-->
+        <constructor-arg ref="subWriter"/>
+    </bean>
+    <!--bean 是java的非抽象类
+    property：是类中具有setteer方法的域
+    constructor-arg：是类中的构造方法   -->
+    <!--公共配置-->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <!--这个是直接配置数值  -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql:///"/>
+        <property name="username" value="root"/>
+        <property name="password" value="system"/>
+    </bean>
+    <!--这个是配置的文件-->
+    <!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+    </bean>-->
+
+    <!--类型别名 构造器方法配置参数和set方法配置参数-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!--应用后，就可以用类名的小写了-->
+        <property name="typeAliasesPackage" value="model"/>
+    </bean>
+
+    <!--index表示是第一个参数-->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+</beans>
+
+        <!--
+        配置文件的创建 new  xml Configuration File  spring Config  bean头声明 -->

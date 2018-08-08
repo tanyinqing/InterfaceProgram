@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这个是映射文件 定义sql语句  对应的必须是全限定名  对应的名称空间 useGeneratedKeys 主键 -->
+<mapper namespace="book">
+    <!--<insert id="create" parameterType="model.Book" useGeneratedKeys="true" keyProperty="id">-->
+   <!--类名的小写自动匹配   keyProperty这个是key-->
+    <insert id="create" parameterType="book" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO db.book VALUES (NULL, #{title}, #{price},#{amount},#{pubTime},#{userId})
+    </insert>
+
+    <!--<select id="queryAll" resultType="model.Book" >-->
+    <select id="queryAll" resultType="book" >
+        SELECT * FROM db.book ORDER BY id DESC;
+    </select>
+
+    <update id="update" parameterType="model.Book">
+        UPDATE db.book SET title = #{title},price = #{price},amount = #{amount}, pubTime = #{pubTime}  WHERE id = #{id}
+    </update>
+
+    <select id="queryById" resultType="book" parameterType="int">
+        SELECT * FROM db.book WHERE id=#{id}
+    </select>
+
+    <delete id="remove" parameterType="int">
+        DELETE FROM db.book WHERE id=#{id}
+    </delete>
+
+    <select id="queryBooksByUserId" parameterType="int" resultType="book">
+        SELECT *
+        FROM db.book
+        WHERE userId = #{userId}
+    </select>
+
+    <resultMap id="queryUserByBookId_map" type="book">
+        <result property="title" column="title"/>
+        <result property="price" column="price"/>
+        <result property="amount" column="amount"/>
+        <result property="pubTime" column="pubTime"/>
+        <association property="user" javaType="user">
+            <result property="username" column="username"/>
+        </association>
+    </resultMap>
+    <select id="queryUserByBookId" resultMap="queryUserByBookId_map">
+        SELECT
+        b.title,
+        b.price,
+        b.amount,
+        b.pubTime,
+        u.username
+        FROM db.book AS b INNER JOIN db.user AS u
+        ON b.userId = u.id
+        WHERE b.id = #{id}
+    </select>
+
+    <!-- <update id="remove" parameterType="int">
+       DELETE FROM db.user WHERE id=#{id}
+    </update>-->
+</mapper>

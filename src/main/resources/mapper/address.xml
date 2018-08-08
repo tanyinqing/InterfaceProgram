@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这个是映射文件 定义sql语句  对应的必须是全限定名  对应的名称空间 useGeneratedKeys 主键 -->
+<mapper namespace="address">
+
+    <insert id="create" parameterType="address" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO db.address
+        VALUE (NULL, #{detail}, #{userId})
+    </insert>
+
+    <select id="queryAll" resultType="address">
+        SELECT *
+        FROM db.address
+        ORDER BY id DESC
+    </select>
+
+    <!--同名的指定别名-->
+    <resultMap id="addressUser_map" type="address">
+        <id property="id" column="id"/>
+        <result property="detail" column="detail"/>
+        <association property="user" javaType="user">
+            <id property="id" column="user_id"/>
+            <result property="username" column="username"/>
+        </association>
+    </resultMap>
+    <select id="addressUser" parameterType="int" resultMap="addressUser_map">
+        select
+        a.id,
+        a.detail,
+        u.id AS user_id,
+        u.username
+        from db.address as a inner join db.user as u
+        on a.id = u.addressId
+        where a.id = #{id}
+    </select>
+</mapper>

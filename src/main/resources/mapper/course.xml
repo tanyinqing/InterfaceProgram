@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="course">
+    <select id="queryAll" resultType="course">
+        select *
+        from db.course
+        order by id desc
+    </select>
+
+    <resultMap id="courseStudents_map" type="course">
+        <result property="title" column="title"/>
+        <collection property="students" ofType="student">
+            <result property="name" column="name"/>
+        </collection>
+    </resultMap>
+    <select id="courseStudents" parameterType="int" resultMap="courseStudents_map">
+        select
+        c.title,
+        s.name
+        from
+        db.course as c
+        left join db.student_course as sc
+        on c.id = sc.courseId
+        left join db.student as s
+        on sc.studentId = s.id
+        where c.id = #{id}
+    </select>
+</mapper>
