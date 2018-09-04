@@ -1,19 +1,23 @@
 package controller;
 
 import model.Book;
+import model.Course;
+import model.DownData;
 import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import service.BookService;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
- * æ§åˆ¶å™¨
- * æ³¨è§£æ–¹å¼æ¥å†™
- * è¯·æ±‚æ˜ å°„
+ * ¿ØÖÆÆ÷
+ * ×¢½â·½Ê½À´Ğ´
+ * ÇëÇóÓ³Éä
  */
 @Controller
 @RequestMapping("book")
@@ -21,7 +25,7 @@ public class BookController extends BaseController {
    /* @Autowired
     private SqlSession sqlSession;*/
 
-//    @Qualifier("bookDaoImpl")  ç”¨é‚£ä¸€ä¸ªç‰ˆæœ¬
+//    @Qualifier("bookDaoImpl")  ÓÃÄÇÒ»¸ö°æ±¾
     //     @Qualifier("JDBCBookDaoImpl")
 /*@Autowired
     private BookDao bookDao;*/
@@ -29,46 +33,57 @@ public class BookController extends BaseController {
     private BookService bookService;
 
     @RequestMapping("create")
-    private String create(Book book) {
+    @ResponseBody
+    private DownData create(Book book) {
 //        System.out.println("user..."+user.toString());
-        //è¿ç”¨mybatisæ¡†æ¶æŠŠç”¨æˆ·å­˜å‚¨åˆ°æ•°æ®åº“ä¸­  éšå«çš„å¯¹åº”å…³ç³»
+        //ÔËÓÃmybatis¿ò¼Ü°ÑÓÃ»§´æ´¢µ½Êı¾İ¿âÖĞ  Òşº¬µÄ¶ÔÓ¦¹ØÏµ
 //        try (SqlSession sqlSession = MyBatisSession.getSqlSession(true)) {
 //            sqlSession.insert("book.create", book);
 //        }
+//        System.out.println(book.toString());
         bookService.create(book);
         // return "redirect:/home.jsp";
+       /* String msg="Í¼Êé´´½¨³É¹¦";
+        DownData data=new DownData("1",msg,"true","");
+            return data;*/
             return queryAll();
         //      return queryById(4);
     }
 
     @RequestMapping("queryAll")
-    private String queryAll() {
+    @ResponseBody
+    private DownData queryAll() {
 //        System.out.println("user..."+user.toString());
-        //è¿ç”¨mybatisæ¡†æ¶æŠŠç”¨æˆ·å­˜å‚¨åˆ°æ•°æ®åº“ä¸­  éšå«çš„å¯¹åº”å…³ç³»
+        //ÔËÓÃmybatis¿ò¼Ü°ÑÓÃ»§´æ´¢µ½Êı¾İ¿âÖĞ  Òşº¬µÄ¶ÔÓ¦¹ØÏµ
 //        try (SqlSession sqlSession = MyBatisSession.getSqlSession(true)) {
 //            session.setAttribute("books", sqlSession.selectList("book.queryAll"));
 //        }
-        User user= (User) session.getAttribute("user");
-       session.setAttribute("books",bookService.queryList("queryBooksByUserId",user.getId()));
-//         session.setAttribute("books",bookService.queryAll());
-        return "redirect:/home.jsp";
+
+        String msg="²éÑ¯Ñ§ÉúÃûÏÂµÄÈ«²¿Í¼Êé";
+        List<Book> addresses=bookService.queryList("queryBooksByUserId",1);
+        DownData data=new DownData("1",msg,"true",addresses);
+        return data;
     }
 
-    @RequestMapping("queryById/{id}") //è·¯å¾„å‚æ•°å‘è®¾ç½®å’Œè·å–
-    private String queryById(@PathVariable int id) {
+    @RequestMapping("queryById/{id}") //Â·¾¶²ÎÊı·¢ÉèÖÃºÍ»ñÈ¡
+    @ResponseBody
+    private DownData queryById(@PathVariable int id) {
 //        System.out.println("user..."+user.toString());
-        //è¿ç”¨mybatisæ¡†æ¶æŠŠç”¨æˆ·å­˜å‚¨åˆ°æ•°æ®åº“ä¸­  éšå«çš„å¯¹åº”å…³ç³»  false æŸ¥è¯¢å’Œäº‹åŠ¡æ— å…³
+        //ÔËÓÃmybatis¿ò¼Ü°ÑÓÃ»§´æ´¢µ½Êı¾İ¿âÖĞ  Òşº¬µÄ¶ÔÓ¦¹ØÏµ  false ²éÑ¯ºÍÊÂÎñÎŞ¹Ø
 //        try (SqlSession sqlSession = MyBatisSession.getSqlSession(false)) {
 //            session.setAttribute("book", sqlSession.selectOne("book.queryById", id));
 //        }
-        session.setAttribute("book", bookService.queryById(id));
-        return "redirect:/edit.jsp";
+        String msg="¸ù¾İÍ¼ÊéµÄid²éÑ¯Í¼Êé";
+       Book addresses=bookService.queryById(id);
+        DownData data=new DownData("1",msg,"true",addresses);
+        return data;
     }
 
-    @RequestMapping("update") //è·¯å¾„å‚æ•°
-    private String update(Book book) {
+    @RequestMapping("update") //Â·¾¶²ÎÊı
+    @ResponseBody
+    private DownData update(Book book) {
 //        System.out.println("user..."+user.toString());
-        //è¿ç”¨mybatisæ¡†æ¶æŠŠç”¨æˆ·å­˜å‚¨åˆ°æ•°æ®åº“ä¸­  éšå«çš„å¯¹åº”å…³ç³»  false æŸ¥è¯¢å’Œäº‹åŠ¡æ— å…³
+        //ÔËÓÃmybatis¿ò¼Ü°ÑÓÃ»§´æ´¢µ½Êı¾İ¿âÖĞ  Òşº¬µÄ¶ÔÓ¦¹ØÏµ  false ²éÑ¯ºÍÊÂÎñÎŞ¹Ø
 //        try (SqlSession sqlSession = MyBatisSession.getSqlSession(true)) {
 //            sqlSession.update("book.update", book);
 //        }
@@ -76,10 +91,11 @@ public class BookController extends BaseController {
         return queryAll();
     }
 
-    @RequestMapping("remove/{id}") //è·¯å¾„å‚æ•°
-    private String remove(@PathVariable int id) {
+    @RequestMapping("remove/{id}") //Â·¾¶²ÎÊı
+    @ResponseBody
+    private DownData remove(@PathVariable int id) {
 //        System.out.println("user..."+user.toString());
-        //è¿ç”¨mybatisæ¡†æ¶æŠŠç”¨æˆ·å­˜å‚¨åˆ°æ•°æ®åº“ä¸­  éšå«çš„å¯¹åº”å…³ç³»  false æŸ¥è¯¢å’Œäº‹åŠ¡æ— å…³
+        //ÔËÓÃmybatis¿ò¼Ü°ÑÓÃ»§´æ´¢µ½Êı¾İ¿âÖĞ  Òşº¬µÄ¶ÔÓ¦¹ØÏµ  false ²éÑ¯ºÍÊÂÎñÎŞ¹Ø
 //        try (SqlSession sqlSession = MyBatisSession.getSqlSession(true)) {
 //            sqlSession.delete("book.remove", id);
 //        }
@@ -88,11 +104,13 @@ public class BookController extends BaseController {
     }
 
 
-    @RequestMapping("removeBooks") //è·¯å¾„å‚æ•°removeBooks
-    private String removeBooks(Integer[] ids) {
+    //É¾³ı¶à±¾Í¼Êé  ËüµÄ²ÎÊıÊÇÒ»¸öÕûĞÎÊı×é
+    @RequestMapping("removeBooks") //Â·¾¶²ÎÊıremoveBooks
+    @ResponseBody
+    private DownData removeBooks(Integer[] ids) {
         System.out.println(Arrays.toString(ids));
 //        System.out.println("user..."+user.toString());
-        //è¿ç”¨mybatisæ¡†æ¶æŠŠç”¨æˆ·å­˜å‚¨åˆ°æ•°æ®åº“ä¸­  éšå«çš„å¯¹åº”å…³ç³»  false æŸ¥è¯¢å’Œäº‹åŠ¡æ— å…³
+        //ÔËÓÃmybatis¿ò¼Ü°ÑÓÃ»§´æ´¢µ½Êı¾İ¿âÖĞ  Òşº¬µÄ¶ÔÓ¦¹ØÏµ  false ²éÑ¯ºÍÊÂÎñÎŞ¹Ø
 //        try (SqlSession sqlSession = MyBatisSession.getSqlSession(true)) {
 //            for (int id : ids) {
 //                sqlSession.delete("book.remove", id);
@@ -104,14 +122,21 @@ public class BookController extends BaseController {
     }
 
     @RequestMapping("queryAllBooks")
-    private String queryAllbooks() {
+    @ResponseBody
+    private DownData queryAllbooks() {
         session.setAttribute("books", bookService.queryAll());
-        return "redirect:/books.jsp";
+        String msg="²éÑ¯È«²¿Í¼Êé";
+        List<Book> addresses=bookService.queryAll();
+        DownData data=new DownData("1",msg,"true",addresses);
+        return data;
     }
 
     @RequestMapping("queryUserByBookId/{id}")
-    private String queryUserByBookId(@PathVariable int id) {
-        session.setAttribute("book", bookService.queryOne("queryUserByBookId", id));
-        return "redirect:/book.jsp";
+    @ResponseBody
+    private DownData queryUserByBookId(@PathVariable int id) {
+        String msg="²éÑ¯¶Á¹ıÄ³±¾ÊéµÄÈ«²¿Ñ§Éú";
+        Book addresses=bookService.queryOne("queryUserByBookId", id);
+        DownData data=new DownData("1",msg,"true",addresses);
+        return data;
     }
 }

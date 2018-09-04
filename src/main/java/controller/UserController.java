@@ -43,11 +43,10 @@ public class UserController extends BaseController {//高级业务类
     private DownData signUp(User user) throws IOException {
 
         if (!userService.signUp(user)) {
-            request.setAttribute("message", "username is existed.");
             DownData data=new DownData("1","注册名已经存在!","false","");
             return data;
         }
-//        userDao.create(user);
+//        userService.create(user);
         DownData data=new DownData("1","注册成功!","true",user);
         return data;
     }
@@ -65,7 +64,6 @@ public class UserController extends BaseController {//高级业务类
            DownData data=new DownData("1","登录成功!","true",user);
            return data;
        }
-        request.setAttribute("message", "Invalid username or password.");
         DownData data=new DownData("1","登录失败!","false","");
         return data;
     }

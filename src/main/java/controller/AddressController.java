@@ -32,7 +32,6 @@ public class AddressController extends BaseController {
     private DownData create(Address address) {
         User user = userService.queryById(address.getUserId());
         if (user.getAddressId() > 0) {
-            request.setAttribute("message", "User has address.");
             DownData data=new DownData("1","该用户已经有地址!","true","");
             return data;
         }
@@ -47,14 +46,14 @@ public class AddressController extends BaseController {
     @ResponseBody
     private DownData queryAll() {
         List<Address> addresses=addressService.queryAll();
-        DownData data=new DownData(String.valueOf(addresses.size()),"查询成功!","true",addresses);
+        DownData data=new DownData(String.valueOf(addresses.size()),"查询所有地址!","true",addresses);
         return data;
     }
 
     @RequestMapping("addressUser/{id}")
     @ResponseBody
     private DownData addressUser(@PathVariable int id) {
-        DownData data=new DownData("1","查询成功!","true",addressService.queryOne("addressUser", id));
+        DownData data=new DownData("1","查询指定地址及对应的用户!","true",addressService.queryOne("addressUser", id));
         return data;
     }
 
